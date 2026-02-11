@@ -12,12 +12,14 @@ CREATE TABLE revision_slots (
     scheduled_for DATE NOT NULL,
     completed BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    
-    -- User, topic, and active slot combination should be unique
-    -- Allow multiple slots per topic but not for same day if not completed
-    UNIQUE(user_id, topic_id, scheduled_for) WHERE completed = FALSE
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Partial unique index: only one active (not completed) slot per user/topic/date
+-- This replaces the invalid inline UNIQUE...WHERE constraint
+CREATE UNIQUE INDEX unique_active_revision_slot
+ON revision_slots(user_id, topic_id, scheduled_for)
+WHERE completed = FALSE;
 
 -- Indexes for performance
 CREATE INDEX idx_revision_slots_user_id ON revision_slots(user_id);
