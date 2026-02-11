@@ -66,7 +66,11 @@ class HeatMapJob {
     
     // Then run at regular intervals
     setInterval(async () => {
-      await this.runHeatMapUpdate();
+      try {
+        await this.runHeatMapUpdate();
+      } catch (error) {
+        console.error(`[${new Date().toISOString()}] HeatMap scheduler error:`, error);
+      }
     }, intervalMs);
   }
 
