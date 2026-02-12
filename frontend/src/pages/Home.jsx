@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 
 const Home = () => {
-  const [homeData, setHomeData] = useState(null);
+  const [redoToday, setRedoToday] = useState([]);
+  const [revisionToday, setRevisionToday] = useState([]);
+  const [currentStreak, setCurrentStreak] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -11,7 +13,12 @@ const Home = () => {
       try {
         setLoading(true);
         const response = await api.get('/home');
-        setHomeData(response.data);
+        // STRICT FIX: Extract data from response.data.data
+        const homeData = response.data?.data;
+        
+        setRedoToday(homeData?.redo_today || []);
+        setRevisionToday(homeData?.revision_today || []);
+        setCurrentStreak(homeData?.current_streak || 0);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load home data');
       } finally {
@@ -56,7 +63,7 @@ const Home = () => {
             <h2 className="text-xl font-semibold mb-3 flex items-center">
               🔥 Current Streak
             </h2>
-            <p className="text-3xl font-bold text-orange-600">{homeData.current_streak}</p>
+            <p className="text-3xl font-bold text-orange-600">{currentStreak}</p>
           </div>
 
           {/* Redo Today */}
@@ -64,11 +71,11 @@ const Home = () => {
             <h2 className="text-xl font-semibold mb-3 flex items-center">
               🔁 Redo Today
             </h2>
-            {homeData.redo_today.length === 0 ? (
+            {redoToday?.length === 0 ? (
               <p className="text-gray-500">No redo tasks today 🎉 You're doing great!</p>
             ) : (
               <div className="space-y-3">
-                {homeData.redo_today.map((item, index) => (
+                {redoToday?.map((item, index) => (
                   <div key={index} className="border-l-4 border-blue-400 pl-4 py-2">
                     <p className="font-medium text-gray-900">{item.question_text}</p>
                     <p className="text-sm text-gray-600">Type: {item.schedule_type}</p>
@@ -84,11 +91,11 @@ const Home = () => {
             <h2 className="text-xl font-semibold mb-3 flex items-center">
               📆 Revision Today
             </h2>
-            {homeData.revision_today.length === 0 ? (
+            {revisionToday?.length === 0 ? (
               <p className="text-gray-500">No revisions scheduled today 📚 Take a break or add new ones.</p>
             ) : (
               <div className="space-y-3">
-                {homeData.revision_today.map((item, index) => (
+                {revisionToday?.map((item, index) => (
                   <div key={index} className="border-l-4 border-green-400 pl-4 py-2">
                     <p className="font-medium text-gray-900">{item.topic_name}</p>
                     <p className="text-sm text-gray-600">Type: {item.slot_type}</p>
