@@ -10,7 +10,7 @@ const Home = () => {
     const fetchHomeData = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/api/home');
+        const response = await api.get('/home');
         setHomeData(response.data);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load home data');
