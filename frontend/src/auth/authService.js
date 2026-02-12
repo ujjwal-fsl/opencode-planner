@@ -2,20 +2,24 @@ import api from '../api/axios';
 
 export const authService = {
   login: async (credentials) => {
-    const response = await api.post('/api/auth/login', credentials);
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
+    // Note: /api is already appended by axios instance
+    const response = await api.post('/auth/login', credentials);
+    // STRICT FIX: Backend returns token in data.data.token
+    const token = response.data?.data?.token;
+    if (token) {
+      localStorage.setItem('token', token);
     }
     return response.data;
   },
 
   register: async (userData) => {
-    const response = await api.post('/api/auth/register', userData);
+    const response = await api.post('/auth/register', userData);
     return response.data;
   },
 
   logout: () => {
     localStorage.removeItem('token');
+    window.location.href = '/login';
   },
 
   getToken: () => {
