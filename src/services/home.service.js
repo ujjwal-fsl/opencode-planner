@@ -37,11 +37,12 @@ class HomeService {
       SELECT 
         rs.id as redo_id,
         rs.mistake_id,
-        m.question_text,
+        q.question_text,
         rs.schedule_type,
         rs.due_date
       FROM redo_schedule rs
       JOIN mistake_vault_entries m ON rs.mistake_id = m.id
+      JOIN questions q ON m.question_id = q.id
       WHERE m.user_id = $1 
         AND rs.performed = false 
         AND rs.due_date = CURRENT_DATE

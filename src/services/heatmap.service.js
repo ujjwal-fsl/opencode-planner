@@ -92,7 +92,7 @@ class HeatMapService {
         FROM topics t
         LEFT JOIN mistake_vault_entries m ON t.id = m.topic_id AND m.user_id = $1
         LEFT JOIN redo_schedule rs ON m.id = rs.mistake_id
-        LEFT JOIN redo_attempts ra ON rs.id = ra.redo_id
+        LEFT JOIN redo_attempts ra ON m.id = ra.mistake_id
         GROUP BY t.id
       `;
 
