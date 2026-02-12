@@ -1,5 +1,5 @@
 const pool = require('../config/database');
-const { UserModel } = require('../models/streak.model');
+const UserModel = require('../models/User');
 
 class HomeService {
   static async getHomeData(userId) {
